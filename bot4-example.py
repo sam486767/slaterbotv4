@@ -21,7 +21,7 @@ async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Hello, Active Developer!")
 
 
-OWNER_ID = 887774269768089660  # Your Discord user ID
+OWNER_ID =   # Your Discord user ID
 
 @bot.tree.command(name="start_election", description="Start a new election with candidates.")
 async def start_election(interaction: discord.Interaction,
