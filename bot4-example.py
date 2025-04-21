@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 import json
 from datetime import datetime, timedelta
+OWNER_ID =   # Your Discord user ID
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -21,7 +22,6 @@ async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Hello, Active Developer!")
 
 
-OWNER_ID =   # Your Discord user ID
 
 @bot.tree.command(name="start_election", description="Start a new election with candidates.")
 async def start_election(interaction: discord.Interaction,
