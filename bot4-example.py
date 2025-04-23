@@ -84,7 +84,12 @@ async def eval_code(interaction: discord.Interaction, code: str):
         await interaction.response.send_message("❌ You are not authorized to use this command.", ephemeral=True)
         return
     try:
-        result = eval(code)
+        # Use exec to run the code (including function definitions)
+        exec_locals = {}
+        exec(code, {}, exec_locals)
+        
+        # If the code defines a function, try to run it
+        result = exec_locals if not exec_locals else list(exec_locals.values())[-1]  # Get last value, usually the return value
         await interaction.response.send_message(f"✅ Result: `{result}`", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f"⚠️ Error: `{e}`", ephemeral=True)
