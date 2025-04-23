@@ -32,7 +32,7 @@ async def hello(interaction: discord.Interaction):
 @bot.tree.command(name="help", description="Lists available commands.")
 async def help_command(interaction: discord.Interaction):
     help_text = """
-    **Available Commands (v4.0.0-pre2)**
+    **Available Commands (v4.0.0-pre3)**
 
     🔧 Core:
     - /ping – Check bot latency and uptime
@@ -65,7 +65,7 @@ async def ping(interaction: discord.Interaction):
 # 🤖 Version command — shows the current version
 @bot.tree.command(name="version", description="Display the bot's version.")
 async def version(interaction: discord.Interaction):
-    await interaction.response.send_message("🤖 Slater Bot v4.0.0-pre2 — command framework build.")
+    await interaction.response.send_message("🤖 Slater Bot v4.0.0-pre3 — command framework build.")
 
 # 🛑 Shutdown — only works for the owner 
 @bot.tree.command(name="shutdown", description="Shuts down the bot (owner only).")
