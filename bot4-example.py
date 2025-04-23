@@ -32,7 +32,7 @@ async def hello(interaction: discord.Interaction):
 @bot.tree.command(name="help", description="Lists available commands.")
 async def help_command(interaction: discord.Interaction):
     help_text = """
-    **Available Commands (v4.0.0-pre3)**
+    **Available Commands (v4.0.0)**
 
     🔧 Core:
     - /ping – Check bot latency and uptime
@@ -42,10 +42,12 @@ async def help_command(interaction: discord.Interaction):
     👑 Admin:
     - /shutdown – Shut down the bot (owner only)
     - /clear <amount> – Clear recent messages
-
+    - /pm <user> <message> – Send a private message to a user (admin only)
+    
     🧰 Utility:
     - /userinfo <user> – Get user info
     - /serverinfo – Server details
+    - /github – Get the link to the bot's GitHub repository
 
     🎲 Fun:
     - /coinflip – Flip a coin
@@ -65,7 +67,7 @@ async def ping(interaction: discord.Interaction):
 # 🤖 Version command — shows the current version
 @bot.tree.command(name="version", description="Display the bot's version.")
 async def version(interaction: discord.Interaction):
-    await interaction.response.send_message("🤖 Slater Bot v4.0.0-pre3 — command framework build.")
+    await interaction.response.send_message("🤖 Slater Bot v4.0.0 — First Full Public Release.")
 
 # 🛑 Shutdown — only works for the owner 
 @bot.tree.command(name="shutdown", description="Shuts down the bot (owner only).")
@@ -76,7 +78,6 @@ async def shutdown(interaction: discord.Interaction):
     await interaction.response.send_message("🛑 Shutting down...")
     await bot.close()
     
-
 # 🧹 Clear — removes messages 
 @bot.tree.command(name="clear", description="Clear messages from the channel.")
 async def clear(interaction: discord.Interaction, amount: int):
@@ -90,6 +91,22 @@ async def clear(interaction: discord.Interaction, amount: int):
 
     deleted = await interaction.channel.purge(limit=amount)
     await interaction.response.send_message(f"🧹 Cleared {len(deleted)} messages.", ephemeral=True)
+
+# 📩 PM Command — Sends a private message to a user (admin only)
+@bot.tree.command(name="pm", description="Send a private message to a user (admin only).")
+async def pm(interaction: discord.Interaction, user: discord.Member, message: str):
+    # Check if the user is the owner/admin before sending a PM
+    if interaction.user.id != OWNER_ID and not interaction.user.guild_permissions.administrator:
+        await interaction.response.send_message("❌ You are not authorized to send private messages.", ephemeral=True)
+        return
+
+    # Try sending the private message to the user
+    try:
+        await user.send(f"📬 You have a new message from the bot: {message}")
+        await interaction.response.send_message(f"✅ Successfully sent a PM to {user.display_name}.")
+    except discord.Forbidden:
+        # If the user has DMs disabled, inform the admin
+        await interaction.response.send_message(f"⚠️ Could not send a PM to {user.display_name} because they have DMs disabled.")
 
 # ℹ️ Userinfo — provides member details 
 @bot.tree.command(name="userinfo", description="Get information about a user.")
@@ -111,6 +128,11 @@ async def serverinfo(interaction: discord.Interaction):
     embed.add_field(name="Member Count", value=interaction.guild.member_count, inline=True)
     embed.add_field(name="Creation Date", value=interaction.guild.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
     await interaction.response.send_message(embed=embed)
+
+# 🔗 GitHub Command — Sends a link to the official Slater Bot repository
+@bot.tree.command(name="github", description="Get the link to the bot's GitHub repository.")
+async def github(interaction: discord.Interaction):
+    await interaction.response.send_message("📂 View the Slater Bot code on GitHub:\nhttps://github.com/sam486767/slaterbotv4")
 
 # 🪙 Coinflip — basic RNG response
 @bot.tree.command(name="coinflip", description="Flip a coin.")
