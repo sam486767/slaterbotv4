@@ -41,7 +41,6 @@ async def help_command(interaction: discord.Interaction):
 
     👑 Admin:
     - /shutdown – Shut down the bot (owner only)
-    - /eval – Run code (owner only)
     - /clear <amount> – Clear recent messages
 
     🧰 Utility:
@@ -77,23 +76,7 @@ async def shutdown(interaction: discord.Interaction):
     await interaction.response.send_message("🛑 Shutting down...")
     await bot.close()
     
-# 🧠 Eval — allows owner to run Python code
-@bot.tree.command(name="eval", description="Evaluate Python code (owner only).")
-async def eval_code(interaction: discord.Interaction, code: str):
-    if interaction.user.id != OWNER_ID:
-        await interaction.response.send_message("❌ You are not authorized to use this command.", ephemeral=True)
-        return
-    try:
-        # Use exec to run the code (including function definitions)
-        exec_locals = {}
-        exec(code, {}, exec_locals)
-        
-        # If the code defines a function, try to run it
-        result = exec_locals if not exec_locals else list(exec_locals.values())[-1]  # Get last value, usually the return value
-        await interaction.response.send_message(f"✅ Result: `{result}`", ephemeral=True)
-    except Exception as e:
-        await interaction.response.send_message(f"⚠️ Error: `{e}`", ephemeral=True)
-        
+
 # 🧹 Clear — removes messages 
 @bot.tree.command(name="clear", description="Clear messages from the channel.")
 async def clear(interaction: discord.Interaction, amount: int):
