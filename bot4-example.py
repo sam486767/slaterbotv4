@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import time
 import random
 import asyncio
+
 OWNER_ID =   # Your Discord user ID
 
 intents = discord.Intents.default()
@@ -28,34 +29,34 @@ async def on_ready():
 async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Hello, Active Developer!")
 
-# 📖 Help command
-@bot.tree.command(name="help", description="Lists available commands.")
+# 📖 /help — List all commands with categories, emojis, and roadmap link
+@bot.tree.command(name="help", description="Show a list of all commands.")
 async def help_command(interaction: discord.Interaction):
-    help_text = """
-    **Available Commands (v4.0.0)**
+    help_text = "**Slater Bot v4.0.1**\n\n"
 
-    🔧 Core:
-    - /ping – Check bot latency and uptime
-    - /version – Display bot version
-    - /help – Show this list
+    help_text += "🔧 **Core**\n"
+    help_text += "- 🏓 `/ping` – Check latency and uptime\n"
+    help_text += "- 🔢 `/version` – Show the current version\n"
+    help_text += "- 📖 `/help` – Show this list\n\n"
 
-    👑 Admin:
-    - /shutdown – Shut down the bot (owner only)
-    - /clear <amount> – Clear recent messages
-    - /pm <user> <message> – Send a private message to a user (admin only)
-    
-    🧰 Utility:
-    - /userinfo <user> – Get user info
-    - /serverinfo – Server details
-    - /github – Get the link to the bot's GitHub repository
+    help_text += "👑 **Admin**\n"
+    help_text += "- 📴 `/shutdown` – Shut down the bot (owner only)\n"
+    help_text += "- 🧹 `/clear <amount>` – Purge messages\n"
+    help_text += "- 📩 `/pm <user> <message>` – Send a private message to a user\n\n"
 
-    🎲 Fun:
-    - /coinflip – Flip a coin
-    - /8ball <question> – Ask the magic 8-ball
-    - /spam <message> – Spam message 100 times
-    """
+    help_text += "🧰 **Utility**\n"
+    help_text += "- 🧑 `/userinfo <user>` – Get user info\n"
+    help_text += "- 🏠 `/serverinfo` – Show server details\n"
+    help_text += "- 🧬 `/github` – Link to the bot’s GitHub repo\n\n"
+
+    help_text += "🎲 **Fun**\n"
+    help_text += "- 💰 `/coinflip` – Flip a coin\n"
+    help_text += "- 🎱 `/8ball <question>` – Ask the magic 8-ball\n"
+    help_text += "- 🗯️ `/spam <message>` – Spam a message and auto-delete\n\n"
+
+    help_text += "📌 *Want to know what’s coming next?* [The Road Ahead](https://github.com/sam486767/slaterbotv4/wiki/The-Road-Ahead)"
+
     await interaction.response.send_message(help_text, ephemeral=True)
-
 
 # 🏓 Ping command — checks bot latency 
 @bot.tree.command(name="ping", description="Check the bot's latency.")
@@ -67,7 +68,7 @@ async def ping(interaction: discord.Interaction):
 # 🤖 Version command — shows the current version
 @bot.tree.command(name="version", description="Display the bot's version.")
 async def version(interaction: discord.Interaction):
-    await interaction.response.send_message("🤖 Slater Bot v4.0.0 — First Full Public Release.")
+    await interaction.response.send_message("🤖 Slater Bot v4.0.1 — New subtle improvements.")
 
 # 🛑 Shutdown — only works for the owner 
 @bot.tree.command(name="shutdown", description="Shuts down the bot (owner only).")
