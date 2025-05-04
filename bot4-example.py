@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timedelta
 import time
 import random
+import aiohttp
 import asyncio
 
 OWNER_ID =   # Your Discord user ID
@@ -32,7 +33,7 @@ async def hello(interaction: discord.Interaction):
 # 📖 /help — List all commands with categories, emojis, and roadmap link
 @bot.tree.command(name="help", description="Show a list of all commands.")
 async def help_command(interaction: discord.Interaction):
-    help_text = "**Slater Bot v4.0.1**\n\n"
+    help_text = "**Slater Bot v4.1.0-pre-release-1**\n\n"
 
     help_text += "🔧 **Core**\n"
     help_text += "- 🏓 `/ping` – Check latency and uptime\n"
@@ -48,12 +49,13 @@ async def help_command(interaction: discord.Interaction):
     help_text += "- 🧑 `/userinfo <user>` – Get user info\n"
     help_text += "- 🏠 `/serverinfo` – Show server details\n"
     help_text += "- 🧬 `/github` – Link to the bot’s GitHub repo\n\n"
+    help_text += "- 📚 `/dictionary <word>` – Look up a word’s definition\n\n"
 
     help_text += "🎲 **Fun**\n"
     help_text += "- 💰 `/coinflip` – Flip a coin\n"
     help_text += "- 🎱 `/8ball <question>` – Ask the magic 8-ball\n"
     help_text += "- 🗯️ `/spam <message>` – Spam a message and auto-delete\n\n"
-    help_text += "- 🌌 `/forcealign – Receive either the Jedi Master or Sith Lord role (cosmetic only) and learn a random fact about your side of the Force."
+    help_text += "- 🌌 `/forcebalance` – Receive either the Jedi Master or Sith Lord role (cosmetic only) and learn a random fact about your side of the Force."
     
     help_text += "📌 *Want to know what’s coming next?* [The Road Ahead](https://github.com/sam486767/slaterbotv4/wiki/The-Road-Ahead)"
 
@@ -69,7 +71,7 @@ async def ping(interaction: discord.Interaction):
 # 🤖 Version command — shows the current version
 @bot.tree.command(name="version", description="Display the bot's version.")
 async def version(interaction: discord.Interaction):
-    await interaction.response.send_message("🤖 Slater Bot v4.0.2 — Star Wars.")
+    await interaction.response.send_message("🤖 Slater Bot v4.1.0 — Pre-Release-1.")
 
 # 🛑 Shutdown — only works for the owner 
 @bot.tree.command(name="shutdown", description="Shuts down the bot (owner only).")
@@ -225,4 +227,19 @@ async def forcebalance(interaction: discord.Interaction):
         ])
         await interaction.response.send_message(f"You are now a **Sith Lord**. {fact}")
 
-bot.run("BOT TOKEN HERE")
+@bot.tree.command(name="dictionary", description="Look up a word's definition.")
+@app_commands.describe(word="The word to look up.")
+async def dictionary(interaction: discord.Interaction, word: str):
+    await interaction.response.defer()
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}") as resp:
+            if resp.status == 200:
+                data = await resp.json()
+                meaning = data[0]['meanings'][0]
+                definition = meaning['definitions'][0]['definition']
+                part_of_speech = meaning['partOfSpeech']
+                await interaction.followup.send(f"**{word.capitalize()}** ({part_of_speech}): {definition}")
+            else:
+                await interaction.followup.send(f"Sorry, I couldn't find a definition for '{word}'.")
+
+bot.run("BOT_TOKEN_HERE")
