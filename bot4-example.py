@@ -53,7 +53,8 @@ async def help_command(interaction: discord.Interaction):
     help_text += "- 💰 `/coinflip` – Flip a coin\n"
     help_text += "- 🎱 `/8ball <question>` – Ask the magic 8-ball\n"
     help_text += "- 🗯️ `/spam <message>` – Spam a message and auto-delete\n\n"
-
+    help_text += "- 🌌 `/forcealign – Receive either the Jedi Master or Sith Lord role (cosmetic only) and learn a random fact about your side of the Force."
+    
     help_text += "📌 *Want to know what’s coming next?* [The Road Ahead](https://github.com/sam486767/slaterbotv4/wiki/The-Road-Ahead)"
 
     await interaction.response.send_message(help_text, ephemeral=True)
@@ -68,7 +69,7 @@ async def ping(interaction: discord.Interaction):
 # 🤖 Version command — shows the current version
 @bot.tree.command(name="version", description="Display the bot's version.")
 async def version(interaction: discord.Interaction):
-    await interaction.response.send_message("🤖 Slater Bot v4.0.1 — New subtle improvements.")
+    await interaction.response.send_message("🤖 Slater Bot v4.0.2 — Star Wars.")
 
 # 🛑 Shutdown — only works for the owner 
 @bot.tree.command(name="shutdown", description="Shuts down the bot (owner only).")
