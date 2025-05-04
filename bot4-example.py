@@ -176,4 +176,47 @@ async def spam(interaction: discord.Interaction, message: str):
     # Announce the spam result after deletion
     await interaction.channel.send(f"📢 The message '**{message}**' was spammed 100 times.\n@everyone")
 
+@bot.slash_command(name="forcebalance", description="Become a Jedi Master or Sith Lord and learn something new.")
+async def forcebalance(ctx):
+    guild = ctx.guild
+    member = ctx.author
+
+    # Role names
+    jedi_name = "Jedi Master"
+    sith_name = "Sith Lord"
+
+    # Check if roles exist, create if missing
+    jedi_role = discord.utils.get(guild.roles, name=jedi_name)
+    sith_role = discord.utils.get(guild.roles, name=sith_name)
+
+    if not jedi_role:
+        jedi_role = await guild.create_role(name=jedi_name, colour=discord.Colour.blue())
+    if not sith_role:
+        sith_role = await guild.create_role(name=sith_name, colour=discord.Colour.red())
+
+    # Check if user already has one of the roles
+    if jedi_role in member.roles or sith_role in member.roles:
+        await ctx.respond("You have already chosen your path. The Force does not allow switching sides.")
+        return
+
+    # Randomly assign Jedi or Sith
+    side = random.choice(["jedi", "sith"])
+
+    if side == "jedi":
+        await member.add_roles(jedi_role)
+        fact = random.choice([
+            "Jedi use the light side of the Force for peace and knowledge.",
+            "Yoda trained Jedi for over 800 years.",
+            "The Jedi Code forbids emotional attachment."
+        ])
+        await ctx.respond(f"You are now a **Jedi Master**. {fact}")
+    else:
+        await member.add_roles(sith_role)
+        fact = random.choice([
+            "The Sith use the dark side of the Force to gain power.",
+            "Darth Bane established the Rule of Two.",
+            "The Sith believe passion is strength."
+        ])
+        await ctx.respond(f"You are now a **Sith Lord**. {fact}")
+
 bot.run("BOT TOKEN HERE")
