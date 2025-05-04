@@ -177,10 +177,10 @@ async def spam(interaction: discord.Interaction, message: str):
     # Announce the spam result after deletion
     await interaction.channel.send(f"📢 The message '**{message}**' was spammed 100 times.\n@everyone")
 
-@bot.slash_command(name="forcebalance", description="Become a Jedi Master or Sith Lord and learn something new.")
+@bot.tree.command(name="forcebalance", description="Become a Jedi Master or Sith Lord and learn something new.")
 async def forcebalance(ctx):
     guild = ctx.guild
-    member = ctx.author
+    member = interaction.user
 
     # Role names
     jedi_name = "Jedi Master"
