@@ -178,8 +178,10 @@ async def spam(interaction: discord.Interaction, message: str):
     await interaction.channel.send(f"📢 The message '**{message}**' was spammed 100 times.\n@everyone")
 
 @bot.tree.command(name="forcebalance", description="Become a Jedi Master or Sith Lord and learn something new.")
-async def forcebalance(ctx):
-    guild = ctx.guild
+async def forcebalance(interaction: discord.Interaction):
+    import random  # Ensure you import random at the top
+
+    guild = interaction.guild
     member = interaction.user
 
     # Role names
@@ -197,7 +199,10 @@ async def forcebalance(ctx):
 
     # Check if user already has one of the roles
     if jedi_role in member.roles or sith_role in member.roles:
-        await ctx.respond("You have already chosen your path. The Force does not allow switching sides.")
+        await interaction.response.send_message(
+            "You have already chosen your path. The Force does not allow switching sides.",
+            ephemeral=True
+        )
         return
 
     # Randomly assign Jedi or Sith
@@ -210,7 +215,7 @@ async def forcebalance(ctx):
             "Yoda trained Jedi for over 800 years.",
             "The Jedi Code forbids emotional attachment."
         ])
-        await ctx.respond(f"You are now a **Jedi Master**. {fact}")
+        await interaction.response.send_message(f"You are now a **Jedi Master**. {fact}")
     else:
         await member.add_roles(sith_role)
         fact = random.choice([
@@ -218,6 +223,6 @@ async def forcebalance(ctx):
             "Darth Bane established the Rule of Two.",
             "The Sith believe passion is strength."
         ])
-        await ctx.respond(f"You are now a **Sith Lord**. {fact}")
+        await interaction.response.send_message(f"You are now a **Sith Lord**. {fact}")
 
 bot.run("BOT TOKEN HERE")
