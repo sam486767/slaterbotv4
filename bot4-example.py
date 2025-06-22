@@ -6,6 +6,7 @@ import time
 import random
 import aiohttp
 import asyncio
+import sqlite3
 
 OWNER_ID =   # Your Discord user ID
 
@@ -16,19 +17,71 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 start_time = time.time()
 
+# --- Database helpers ---
+def init_db():
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            user_id TEXT PRIMARY KEY,
+            username TEXT,
+            signup_date TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+def add_user(user_id, username):
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute('INSERT OR IGNORE INTO users (user_id, username) VALUES (?, ?)', (user_id, username))
+    conn.commit()
+    conn.close()
+
+def user_exists(user_id):
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute('SELECT 1 FROM users WHERE user_id = ?', (user_id,))
+    result = c.fetchone() is not None
+    conn.close()
+    return result
+
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user}!")
+    init_db()  # Initialize DB on start
     try:
         synced = await bot.tree.sync()
         print(f"Synced {len(synced)} command(s).")
     except Exception as e:
         print(e)
 
+@bot.tree.command(name="signup", description="Register yourself and get the Verified role.")
+async def signup(interaction: discord.Interaction):
+    user_id = str(interaction.user.id)
+    username = str(interaction.user)
+
+    if user_exists(user_id):
+        await interaction.response.send_message("✅ You are already signed up!", ephemeral=True)
+        return
+
+    add_user(user_id, username)
+
+    verified_role = discord.utils.get(interaction.guild.roles, name="Verified")
+    if not verified_role:
+        verified_role = await interaction.guild.create_role(name="Verified", colour=discord.Colour.green())
+    try:
+        await interaction.user.add_roles(verified_role)
+    except discord.Forbidden:
+        await interaction.response.send_message("❌ I don't have permission to add roles.", ephemeral=True)
+        return
+
+    await interaction.response.send_message("🎉 You have been signed up and granted the Verified role!", ephemeral=True)
+
+# Example hello command:
 @bot.tree.command(name="hello", description="Say hello to the bot!")
 async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Hello, Active Developer!")
-
 # 📖 Help Command
 @bot.tree.command(name="help", description="Show a list of all commands.")
 async def help_command(interaction: discord.Interaction):
